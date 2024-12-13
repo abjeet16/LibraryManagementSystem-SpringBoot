@@ -52,7 +52,7 @@ public class adminAuthController {
         // Hashes the user's password using a secure algorithm (e.g., bcrypt) before storing it in the database.
         System.out.println(firstName + " " + lastName + " " + email + " " + hashed_password);
 
-        // STORE USER:
+        // STORE USER://
         int result = userService.signUpUser(firstName, lastName, email, hashed_password, Role.ADMIN.toString(),phoneNumber);
         // Calls the `userService` to save the user's details in the database.
         // Returns `1` if successful or some other value if there's an issue.
