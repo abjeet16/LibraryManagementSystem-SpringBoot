@@ -47,7 +47,7 @@ public class adminAuthController {
                     .body("Email already exists");
         }
 
-        // HASH PASSWORD://
+        // HASH PASSWORD:
         String hashed_password = passwordEncoder.encode(password);
         // Hashes the user's password using a secure algorithm (e.g., bcrypt) before storing it in the database.
         System.out.println(firstName + " " + lastName + " " + email + " " + hashed_password);
