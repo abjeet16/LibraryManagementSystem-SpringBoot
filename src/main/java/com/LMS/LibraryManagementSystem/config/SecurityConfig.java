@@ -40,7 +40,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/user/auth/**").permitAll()
-                .requestMatchers("/api/v1/admin/auth/**").hasAuthority(Role.ADMIN.toString())
+                .requestMatchers("/api/v1/admin/**").hasAuthority(Role.ADMIN.toString())
                 .requestMatchers("api/v1/test/user").hasAuthority(Role.USER.toString())
                 .requestMatchers("api/v1/test/admin").hasAuthority(Role.ADMIN.toString())
                 // Publicly accessible endpoints for authentication and general information.
