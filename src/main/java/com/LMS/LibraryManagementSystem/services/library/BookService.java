@@ -17,9 +17,9 @@ public class BookService {
     @Autowired
     private BookCopyRepository bookCopyRepository;
 
-    public Book addNewBook(String name, String author, int volume, int publicationYear, String isbn, String location) {
+    public Book addNewBook(String name, String author, int volume, int publicationYear, String isbn, String location, String publicationName) {
         // Check if the book already exists
-        Book existingBook = bookRepository.findByNameAndPublicationYearAndVolume(name, publicationYear, volume)
+        Book existingBook = bookRepository.findByNameAndAuthorAndPublicationYearAndVolumeAndPublicationName(name, author, publicationYear, volume, publicationName)
                 .orElse(null);
 
         if (existingBook == null) {
@@ -28,6 +28,7 @@ public class BookService {
             newBook.setName(name);
             newBook.setAuthor(author);
             newBook.setVolume(volume);
+            newBook.setPublicationName(publicationName);
             newBook.setPublicationYear(publicationYear);
             Book savedBook = bookRepository.save(newBook);
 

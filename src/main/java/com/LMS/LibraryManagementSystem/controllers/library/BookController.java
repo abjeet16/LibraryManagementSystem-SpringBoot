@@ -19,12 +19,13 @@ public class BookController {
                                           @RequestParam int volume,
                                           @RequestParam int publicationYear,
                                           @RequestParam String isbn,
-                                          @RequestParam(required = false) String location) {
+                                          @RequestParam(required = false) String location,
+                                          @RequestParam String publicationName) {
 
         if (bookService.checkisbn(isbn)) {
             return ResponseEntity.badRequest().body("Book with ISBN " + isbn + " already exists.");
         }
-        Book addedBook = bookService.addNewBook(name, author, volume, publicationYear, isbn, location);
+        Book addedBook = bookService.addNewBook(name, author, volume, publicationYear, isbn, location,publicationName);
         return ResponseEntity.ok("Book added successfully! Book ID: " + addedBook.getId());
     }
 }

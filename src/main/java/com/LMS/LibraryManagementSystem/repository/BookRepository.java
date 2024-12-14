@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
-    Optional<Book> findByNameAndPublicationYearAndVolume(String name, int publicationYear, int volume);
+    Optional<Book> findByNameAndAuthorAndPublicationYearAndVolumeAndPublicationName(
+            String name, String author, int publicationYear, int volume, String publicationName);
 }

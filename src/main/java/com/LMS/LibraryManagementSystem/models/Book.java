@@ -25,5 +25,9 @@ public class Book {
 
     @Column(nullable = false)
     private int publicationYear;
+
+    @Column(nullable = false)
+    private String publicationName;
 }
+
 
