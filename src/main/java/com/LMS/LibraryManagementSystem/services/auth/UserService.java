@@ -1,5 +1,6 @@
 package com.LMS.LibraryManagementSystem.services.auth;
 
+import com.LMS.LibraryManagementSystem.enums.Role;
 import com.LMS.LibraryManagementSystem.models.User;
 import com.LMS.LibraryManagementSystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,5 +66,13 @@ public class UserService {
     public String getPasswordByEmail(String email) {
         return userRepository.getPasswordByEmail(email);
     }// END OF GET PASSWORD BY EMAIL
+
+    public List<User> getAllUsersByRole(Role role) {
+        return userRepository.findByRole(role);
+    }
+
+    public List<User> getAllUsers() {
+        return (List<User>) userRepository.findAll();
+    }
 }
 // END OF USER SERVICE CLASS.

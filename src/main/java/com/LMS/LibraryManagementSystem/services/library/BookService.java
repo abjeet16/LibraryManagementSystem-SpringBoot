@@ -8,6 +8,8 @@ import com.LMS.LibraryManagementSystem.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BookService {
 
@@ -56,6 +58,25 @@ public class BookService {
 
     public boolean checkisbn(String isbn) {
         return bookCopyRepository.existsByIsbn(isbn);
+    }
+
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    // Fetch books by name
+    public List<Book> getBooksByName(String name) {
+        return bookRepository.findByName(name);
+    }
+
+    // Fetch books by publication name
+    public List<Book> getBooksByPublicationName(String publicationName) {
+        return bookRepository.findByPublicationName(publicationName);
+    }
+
+    // Fetch books by author
+    public List<Book> getBooksByAuthor(String author) {
+        return bookRepository.findByAuthor(author);
     }
 }
 

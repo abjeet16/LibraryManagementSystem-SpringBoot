@@ -1,5 +1,6 @@
 package com.LMS.LibraryManagementSystem.repository;
 
+import com.LMS.LibraryManagementSystem.enums.Role;
 import com.LMS.LibraryManagementSystem.models.User;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
@@ -44,5 +45,8 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     // Query to get password by email
     @Query(value = "SELECT password FROM users WHERE email = :email", nativeQuery = true)
     String getPasswordByEmail(@Param("email") String email);
+
+    List<User> findByRole(Role role);
 }
+
 // END OF USER REPOSITORY INTERFACE.

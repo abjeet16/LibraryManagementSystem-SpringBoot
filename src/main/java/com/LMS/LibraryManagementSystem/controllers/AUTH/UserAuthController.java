@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1/user/auth") // Base path for all endpoints in this controller.
+@RequestMapping("user/auth") // Base path for all endpoints in this controller.
 public class UserAuthController {
 
     @Autowired

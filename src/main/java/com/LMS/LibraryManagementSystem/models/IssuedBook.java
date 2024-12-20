@@ -29,6 +29,6 @@ public class IssuedBook {
     private LocalDate returnDate;
 
     @Column
-    private LocalDate actualReturnDate; // Optional: To record the actual return date.
+    private LocalDate actualReturnDate;
 }
 
