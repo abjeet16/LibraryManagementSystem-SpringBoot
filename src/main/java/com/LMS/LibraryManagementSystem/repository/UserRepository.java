@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Integer> {
@@ -47,6 +48,9 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     String getPasswordByEmail(@Param("email") String email);
 
     List<User> findByRole(Role role);
+
+    @Query("SELECT u.email FROM User u WHERE u.user_id = :userId")
+    Optional<String> findEmailByUserId(Long userId);
 }
 
 // END OF USER REPOSITORY INTERFACE.
