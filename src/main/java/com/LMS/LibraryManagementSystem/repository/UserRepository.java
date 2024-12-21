@@ -50,7 +50,7 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     List<User> findByRole(Role role);
 
     @Query("SELECT u.email FROM User u WHERE u.user_id = :userId")
-    Optional<String> findEmailByUserId(Long userId);
+    String findEmailByUserId(Long userId);
 }
 
 // END OF USER REPOSITORY INTERFACE.

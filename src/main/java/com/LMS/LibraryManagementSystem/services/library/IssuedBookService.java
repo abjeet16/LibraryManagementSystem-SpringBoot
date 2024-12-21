@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class IssuedBookService {
@@ -52,7 +53,7 @@ public class IssuedBookService {
 
         issuedBook = issuedBookRepository.save(issuedBook);
 
-        String email = String.valueOf(userRepository.findEmailByUserId(requestDTO.getUserId()));
+        String email = userRepository.findEmailByUserId(requestDTO.getUserId());
 
         // Send email to user upon issuing the book
         String issueEmailSubject = "Book Borrowed: " + bookCopy.getBook().getName();
@@ -60,7 +61,7 @@ public class IssuedBookService {
                 + bookCopy.getBook().getName() + "'.\n"
                 + "Please return it by " + issuedBook.getReturnDate() + " to avoid any fines.\n\n"
                 + "Thank you.\nLibrary Management System.";
-        emailService.sendEmail("avjeetyadav00@gmail.com", issueEmailSubject, issueEmailBody);
+        emailService.sendEmail(email, issueEmailSubject, issueEmailBody);
 
         return issuedBook;
     }
