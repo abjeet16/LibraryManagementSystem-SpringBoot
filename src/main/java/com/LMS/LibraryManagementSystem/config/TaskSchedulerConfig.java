@@ -17,7 +17,7 @@ public class TaskSchedulerConfig {
         // The setPoolSize method defines the number of threads that will be available in the thread pool
         // Setting it to 10 means that up to 10 tasks can be executed concurrently.
         // If more tasks are scheduled, they will be queued and executed when a thread is free.
-        scheduler.setPoolSize(10); // Maximum number of concurrent tasks to be executed.
+        scheduler.setPoolSize(100); // Maximum number of concurrent tasks to be executed.
 
         // The setThreadNamePrefix method sets a custom name prefix for threads in the thread pool
         // This helps in identifying the threads related to this specific scheduler in logs or when debugging.

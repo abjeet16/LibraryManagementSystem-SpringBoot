@@ -43,40 +43,42 @@ public class IssuedBookService {
 
     @Transactional
     public IssuedBook issueBook(IssuedBookRequestDTO requestDTO) {
-        // Find the book copy
+        // Find the book copy and check availability in a single step
         BookCopy bookCopy = bookCopyRepository.findById(requestDTO.getCopyId())
                 .orElseThrow(() -> new IllegalArgumentException("Book copy not found with ID: " + requestDTO.getCopyId()));
 
-        // Check if the book copy is available
         if (bookCopy.getStatus() == BookStatus.ISSUED || bookCopy.getStatus() == BookStatus.DAMAGED) {
             throw new IllegalStateException("Book copy is not available for issuing.");
         }
 
-        // Mark the book copy as unavailable
+        // Update book status directly
         bookCopy.setStatus(BookStatus.ISSUED);
-        bookCopyRepository.save(bookCopy);
 
-        // Create and save the issued book
+        // Create the issued book entity
         IssuedBook issuedBook = new IssuedBook();
         issuedBook.setUserId(requestDTO.getUserId());
         issuedBook.setBookCopy(bookCopy);
         issuedBook.setIssueDate(requestDTO.getIssueDate());
         issuedBook.setReturnDate(requestDTO.getReturnDate());
-        issuedBook.setActualReturnDate(null); // Initially, the book has not been returned
+        issuedBook.setActualReturnDate(null);
 
-        issuedBook = issuedBookRepository.save(issuedBook);  // Persist the issued book entity
+        // Save both entities within a single transactional boundary
+        bookCopyRepository.save(bookCopy);
+        issuedBook = issuedBookRepository.save(issuedBook);
 
+        // Retrieve email and send notification
         String email = userRepository.findEmailByUserId(requestDTO.getUserId());
 
-        // Send email to user upon issuing the book
-        String issueEmailSubject = "Book Borrowed: " + bookCopy.getBook().getName();
-        String issueEmailBody = "Dear User,\n\nYou have successfully borrowed the book titled '"
+        String emailSubject = "Book Borrowed: " + bookCopy.getBook().getName();
+        String emailBody = "Dear User,\n\nYou have successfully borrowed the book titled '"
                 + bookCopy.getBook().getName() + "'.\n"
                 + "Please return it by " + issuedBook.getReturnDate() + " to avoid any fines.\n\n"
                 + "Thank you.\nLibrary Management System.";
-        //emailService.sendEmail(email, issueEmailSubject, issueEmailBody);
 
-        // Schedule email reminder for return date after the book is issued
+        // Async email notification
+        emailService.sendEmailAsync(email, emailSubject,emailBody);
+
+        // Schedule a reminder for the return date
         scheduleReturnReminder(email, bookCopy.getBook().getName(), issuedBook);
 
         return issuedBook;
@@ -85,7 +87,7 @@ public class IssuedBookService {
     private void scheduleReturnReminder(String email, String bookTitle, IssuedBook issuedBook) {
         // Convert LocalDate to Date for scheduling at 7:00 AM
         Date reminderDate = Date.from(issuedBook.getReturnDate()
-                .atTime(21, 8) // Set to 7:00 AM
+                .atTime(2, 20) // Set to 7:00 AM
                 .atZone(java.time.ZoneId.systemDefault()) // Handle time zone
                 .toInstant());
 
