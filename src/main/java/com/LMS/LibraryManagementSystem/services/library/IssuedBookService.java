@@ -74,10 +74,10 @@ public class IssuedBookService {
                 + bookCopy.getBook().getName() + "'.\n"
                 + "Please return it by " + issuedBook.getReturnDate() + " to avoid any fines.\n\n"
                 + "Thank you.\nLibrary Management System.";
-        emailService.sendEmail(email, issueEmailSubject, issueEmailBody);
+        //emailService.sendEmail(email, issueEmailSubject, issueEmailBody);
 
         // Schedule email reminder for return date after the book is issued
-        //scheduleReturnReminder(email, bookCopy.getBook().getName(), issuedBook);
+        scheduleReturnReminder(email, bookCopy.getBook().getName(), issuedBook);
 
         return issuedBook;
     }
