@@ -105,5 +105,10 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(fine);
         }
     }
+    @PutMapping("/{bookCopyID}/change-status/{status}")
+    public ResponseEntity<String> changeStatus(@PathVariable Long issueId, @PathVariable String status) {
+        bookCopyService.changeStatus(issueId, status);
+        return ResponseEntity.ok("Status changed successfully!");
+    }
 }
 

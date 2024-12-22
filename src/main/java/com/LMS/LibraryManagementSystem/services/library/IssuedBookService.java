@@ -36,7 +36,12 @@ public class IssuedBookService {
     @Autowired
     private TaskScheduler taskScheduler; // To schedule tasks dynamically
 
+    @Autowired
+    private BookCopyService bookCopyService;
+
     private static final double DAILY_FINE = 10.0;
+
+    private static final int MAX_RETRIES = 3;
 
     @Transactional
     public IssuedBook issueBook(IssuedBookRequestDTO requestDTO) {
@@ -128,6 +133,7 @@ public class IssuedBookService {
             }
 
             issuedBookRepository.save(issuedBook); // Save the updated entity.
+            bookCopyService.changeStatus(issuedBook.getBookCopy().getCopyId(), String.valueOf(BookStatus.AVAILABLE));
             return fine;
         }
         return -1; // Book not found with the given ID.
