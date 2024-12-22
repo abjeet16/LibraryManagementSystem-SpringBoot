@@ -77,7 +77,7 @@ public class IssuedBookService {
         emailService.sendEmail(email, issueEmailSubject, issueEmailBody);
 
         // Schedule email reminder for return date after the book is issued
-        scheduleReturnReminder(email, bookCopy.getBook().getName(), issuedBook);
+        //scheduleReturnReminder(email, bookCopy.getBook().getName(), issuedBook);
 
         return issuedBook;
     }
