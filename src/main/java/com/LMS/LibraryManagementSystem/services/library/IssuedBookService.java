@@ -9,14 +9,18 @@ import com.LMS.LibraryManagementSystem.repository.IssuedBookRepository;
 import com.LMS.LibraryManagementSystem.repository.UserRepository;
 import com.LMS.LibraryManagementSystem.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
 public class IssuedBookService {
+
     @Autowired
     private IssuedBookRepository issuedBookRepository;
 
@@ -28,6 +32,11 @@ public class IssuedBookService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TaskScheduler taskScheduler; // To schedule tasks dynamically
+
+    private static final double DAILY_FINE = 10.0;
 
     @Transactional
     public IssuedBook issueBook(IssuedBookRequestDTO requestDTO) {
@@ -50,6 +59,7 @@ public class IssuedBookService {
         issuedBook.setBookCopy(bookCopy);
         issuedBook.setIssueDate(requestDTO.getIssueDate());
         issuedBook.setReturnDate(requestDTO.getReturnDate());
+        issuedBook.setActualReturnDate(null); // Initially, the book has not been returned
 
         issuedBook = issuedBookRepository.save(issuedBook);
 
@@ -63,8 +73,67 @@ public class IssuedBookService {
                 + "Thank you.\nLibrary Management System.";
         emailService.sendEmail(email, issueEmailSubject, issueEmailBody);
 
+        // Schedule email reminder for return date
+        scheduleReturnReminder(email, bookCopy.getBook().getName(), issuedBook);
+
         return issuedBook;
     }
+
+    private void scheduleReturnReminder(String email, String bookTitle, IssuedBook issuedBook) {
+        // Convert LocalDate to Date for scheduling at 19:00 (7:00 PM)
+        Date reminderDate = Date.from(issuedBook.getReturnDate()
+                .atTime(7, 0) // Set to 7:00 AM
+                .atZone(java.time.ZoneId.systemDefault()) // Handle time zone
+                .toInstant());
+
+        // Schedule task
+        taskScheduler.schedule(() -> {
+            // Fetch the latest state of the issued book
+            Optional<IssuedBook> bookOptional = issuedBookRepository.findById(issuedBook.getIssueId());
+            if (bookOptional.isPresent()) {
+                IssuedBook book = bookOptional.get();
+                // Check if the book has not been returned (actualReturnDate is null)
+                if (book.getActualReturnDate() == null) {
+                    // Send email reminder
+                    String subject = "Book Return Reminder";
+                    String body = "Dear User,\n\nThis is a reminder to return the book titled '"
+                            + bookTitle + "' by today to avoid any fines.\n\n"
+                            + "Thank you.\nLibrary Management System.";
+
+                    try {
+                        emailService.sendEmail(email, subject, body);
+                    } catch (Exception e) {
+                        // Log or handle the failure to send email
+                        System.err.println("Failed to send reminder email: " + e.getMessage());
+                    }
+                }
+            } else {
+                // Handle case where the book is not found in the database
+                System.err.println("Issued book with ID " + issuedBook.getIssueId() + " not found.");
+            }
+        }, reminderDate);  // Schedule the task to run at the reminderDate
+    }
+
+    public double returnBookWithFine(Long issueId) {
+        Optional<IssuedBook> issuedBookOptional = issuedBookRepository.findById(issueId);
+        if (issuedBookOptional.isPresent()) {
+            IssuedBook issuedBook = issuedBookOptional.get();
+            LocalDate today = LocalDate.now();
+            issuedBook.setActualReturnDate(today); // Set the actual return date to today.
+
+            double fine = 0;
+            if (today.isAfter(issuedBook.getReturnDate())) {
+                long overdueDays = java.time.temporal.ChronoUnit.DAYS.between(issuedBook.getReturnDate(), today);
+                fine = overdueDays * DAILY_FINE;
+            }
+
+            issuedBookRepository.save(issuedBook); // Save the updated entity.
+            return fine;
+        }
+        return -1; // Book not found with the given ID.
+    }
 }
+
+
 
 

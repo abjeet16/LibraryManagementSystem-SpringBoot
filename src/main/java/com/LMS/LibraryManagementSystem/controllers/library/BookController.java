@@ -8,6 +8,7 @@ import com.LMS.LibraryManagementSystem.services.library.BookCopyService;
 import com.LMS.LibraryManagementSystem.services.library.BookService;
 import com.LMS.LibraryManagementSystem.services.library.IssuedBookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,6 +94,16 @@ public class BookController {
         }
         IssuedBook issuedBook = issuedBookService.issueBook(requestDTO);
         return ResponseEntity.ok(issuedBook);
+    }
+
+    @PutMapping("/{issueId}/return")
+    public ResponseEntity<Double> returnBook(@PathVariable Long issueId) {
+        double fine = issuedBookService.returnBookWithFine(issueId);
+        if (fine >= 0) {
+            return ResponseEntity.ok(fine);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(fine);
+        }
     }
 }
 
