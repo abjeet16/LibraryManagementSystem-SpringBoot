@@ -41,8 +41,6 @@ public class IssuedBookService {
 
     private static final double DAILY_FINE = 10.0;
 
-    private static final int MAX_RETRIES = 3;
-
     @Transactional
     public IssuedBook issueBook(IssuedBookRequestDTO requestDTO) {
         // Find the book copy
@@ -66,7 +64,7 @@ public class IssuedBookService {
         issuedBook.setReturnDate(requestDTO.getReturnDate());
         issuedBook.setActualReturnDate(null); // Initially, the book has not been returned
 
-        issuedBook = issuedBookRepository.save(issuedBook);
+        issuedBook = issuedBookRepository.save(issuedBook);  // Persist the issued book entity
 
         String email = userRepository.findEmailByUserId(requestDTO.getUserId());
 
@@ -78,16 +76,16 @@ public class IssuedBookService {
                 + "Thank you.\nLibrary Management System.";
         emailService.sendEmail(email, issueEmailSubject, issueEmailBody);
 
-        // Schedule email reminder for return date
+        // Schedule email reminder for return date after the book is issued
         scheduleReturnReminder(email, bookCopy.getBook().getName(), issuedBook);
 
         return issuedBook;
     }
 
     private void scheduleReturnReminder(String email, String bookTitle, IssuedBook issuedBook) {
-        // Convert LocalDate to Date for scheduling at 19:00 (7:00 PM)
+        // Convert LocalDate to Date for scheduling at 7:00 AM
         Date reminderDate = Date.from(issuedBook.getReturnDate()
-                .atTime(7, 0) // Set to 7:00 AM
+                .atTime(21, 8) // Set to 7:00 AM
                 .atZone(java.time.ZoneId.systemDefault()) // Handle time zone
                 .toInstant());
 
