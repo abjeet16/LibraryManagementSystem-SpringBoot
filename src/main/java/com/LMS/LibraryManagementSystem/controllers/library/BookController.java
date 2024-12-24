@@ -105,10 +105,25 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(fine);
         }
     }
-    @PutMapping("/{bookCopyID}/change-status/{status}")
+    @PutMapping("/{issueId}/change-status/{status}")
     public ResponseEntity<String> changeStatus(@PathVariable Long issueId, @PathVariable String status) {
         bookCopyService.changeStatus(issueId, status);
         return ResponseEntity.ok("Status changed successfully!");
+    }
+
+    @GetMapping("/issues")
+    public ResponseEntity<List<IssuedBook>> getAllIssues() {
+        List<IssuedBook> issuedBooks = issuedBookService.getAllIssuedBooks();
+        return ResponseEntity.ok(issuedBooks);
+    }
+
+    @GetMapping("/issues/{issueId}")
+    public ResponseEntity<IssuedBook> getIssueById(@PathVariable Long issueId) {
+        IssuedBook issuedBook = issuedBookService.getIssuedBookById(issueId);
+        if (issuedBook == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(issuedBook);
     }
 }
 

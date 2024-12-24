@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -137,6 +138,14 @@ public class IssuedBookService {
             return fine;
         }
         return -1; // Book not found with the given ID.
+    }
+
+    public List<IssuedBook> getAllIssuedBooks() {
+        return issuedBookRepository.feachCurrentIssuedBooks();
+    }
+
+    public IssuedBook getIssuedBookById(Long issueId) {
+        return issuedBookRepository.findById(issueId).orElse(null);
     }
 }
 
