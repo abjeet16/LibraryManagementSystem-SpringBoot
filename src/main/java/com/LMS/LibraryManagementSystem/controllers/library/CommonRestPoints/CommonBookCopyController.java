@@ -2,10 +2,14 @@ package com.LMS.LibraryManagementSystem.controllers.library.CommonRestPoints;
 
 import com.LMS.LibraryManagementSystem.models.Book;
 import com.LMS.LibraryManagementSystem.models.BookCopy;
+import com.LMS.LibraryManagementSystem.models.IssuedBook;
+import com.LMS.LibraryManagementSystem.services.auth.MyCustomUserDetails;
 import com.LMS.LibraryManagementSystem.services.library.BookCopyService;
 import com.LMS.LibraryManagementSystem.services.library.BookService;
+import com.LMS.LibraryManagementSystem.services.library.IssuedBookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +23,9 @@ public class CommonBookCopyController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private IssuedBookService issuedBookService;
 
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
@@ -44,4 +51,19 @@ public class CommonBookCopyController {
         List<Book> books = bookService.getBooksByAuthor(author);
         return ResponseEntity.ok(books);
     }
+
+    @GetMapping("/my-issues")
+    public ResponseEntity<List<IssuedBook>> getMyIssues() {
+
+        // Get the current authenticated user
+        MyCustomUserDetails user = (MyCustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Check if the user is authenticated
+        if (user == null) {
+            return ResponseEntity.status(401).body(null);
+        }
+        List<IssuedBook> issuedBooks  = issuedBookService.getMyIssues(user.getUserId());
+        return ResponseEntity.ok(issuedBooks);
+    }
 }
+//rahul

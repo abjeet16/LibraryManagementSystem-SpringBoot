@@ -12,4 +12,7 @@ public interface IssuedBookRepository extends JpaRepository<IssuedBook, Long> {
 
     @Query("SELECT ib FROM IssuedBook ib WHERE ib.actualReturnDate IS NULL")
     List<IssuedBook> feachCurrentIssuedBooks();
+
+    @Query("SELECT ib FROM IssuedBook ib WHERE ib.userId = :userId")
+    List<IssuedBook> getMyIssues(Long userId);
 }

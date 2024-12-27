@@ -147,6 +147,10 @@ public class IssuedBookService {
     public IssuedBook getIssuedBookById(Long issueId) {
         return issuedBookRepository.findById(issueId).orElse(null);
     }
+
+    public List<IssuedBook> getMyIssues(int userId) {
+        return issuedBookRepository.getMyIssues((long)userId);
+    }
 }
 
 
