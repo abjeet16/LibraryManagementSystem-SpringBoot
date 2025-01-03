@@ -7,7 +7,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
 
-@Configuration // Marks this class as a configuration class for Spring.
+@Configuration //  Marks this class as a configuration class for Spring.
 @EnableAsync   // Enables Spring's asynchronous processing capabilities.
 public class AsyncConfig {
 
